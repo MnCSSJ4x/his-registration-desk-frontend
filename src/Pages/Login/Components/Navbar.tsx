@@ -8,7 +8,7 @@ const Navbar = () => {
 
       {/* Navigation links on the right */}
       <div className="flex flex-wrap space-x-4 px-12">
-        <a href="/login" className="hover:text-hoverPrimaryText text-link01 text-lg">Login</a>
+        <a href="/" className="hover:text-hoverPrimaryText text-link01 text-lg">Home</a>
         <a href="/about" className="hover:text-hoverPrimaryText text-link01 text-lg">About</a>
         <a href="/help" className="hover:text-hoverPrimaryText text-link01 text-lg">Help</a>
       </div>

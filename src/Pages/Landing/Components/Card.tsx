@@ -12,10 +12,10 @@ const Card: React.FC<CardProps> = ({svg, heading,description}) => {
           {/* SVG */}
           <div className="mb-4">{svg}</div>
           {/* Heading */}
-          <h3 className="text-xl font-bold mb-2">{heading}</h3>
+          <h3 className="text-text01 text-2xl font-bold mb-2">{heading}</h3>
         </div>
         {/* Description */}
-        <p className="text-gray-700">{description}</p>
+        <p className="text-text02">{description}</p>
       </div>
     </div>
   )
