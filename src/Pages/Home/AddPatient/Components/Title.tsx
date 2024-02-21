@@ -4,7 +4,7 @@ interface TitleProps {
 }
 const Title : React.FC<TitleProps>= ({title}) => {
   return (
-    <div className="text-text01 text-lg">{title}</div>
+    <div className="flex flex-col items-center text-text01 text-4xl px-4 font-bold">{title}</div>
   )
 }
 
