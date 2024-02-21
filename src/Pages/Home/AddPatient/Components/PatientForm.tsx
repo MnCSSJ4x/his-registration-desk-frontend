@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   firstName: string;
@@ -19,6 +20,7 @@ interface FormErrors {
 }
 
 const PatientForm: React.FC = () => {
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -75,6 +77,12 @@ const PatientForm: React.FC = () => {
     }
   };
 
+  //@TODO: Implement your logic to navigate back
+  const handleBack = () => {
+    // Implement your logic to navigate back
+    navigate(-1); 
+  };
+
   return (
     <form className="w-full mt-8 px-4" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-8 px-8">
@@ -88,7 +96,7 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.firstName && <p className="text-red-500">{errors.firstName}</p>}
+          {errors.firstName && <p className="text-danger02">{errors.firstName}</p>}
         </div>
         <div>
           <label htmlFor="lastName">Last Name*</label>
@@ -100,7 +108,7 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.lastName && <p className="text-red-500">{errors.lastName}</p>}
+          {errors.lastName && <p className="text-danger02">{errors.lastName}</p>}
         </div>
         <div>
           <label htmlFor="aabhaId">AABHA ID</label>
@@ -134,7 +142,7 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.dob && <p className="text-red-500">{errors.dob}</p>}
+          {errors.dob && <p className="text-danger02">{errors.dob}</p>}
         </div>
         <div>
           <label htmlFor="email">Email ID*</label>
@@ -146,7 +154,7 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.email && <p className="text-red-500">{errors.email}</p>}
+          {errors.email && <p className="text-danger02">{errors.email}</p>}
         </div>
         <div>
           <label htmlFor="emergencyContactName">Emergency Contact Name*</label>
@@ -158,7 +166,7 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.emergencyContactName && <p className="text-red-500">{errors.emergencyContactName}</p>}
+          {errors.emergencyContactName && <p className="text-danger02">{errors.emergencyContactName}</p>}
         </div>
         <div>
           <label htmlFor="emergencyContactNumber">Emergency Contact Number*</label>
@@ -170,7 +178,7 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.emergencyContactNumber && <p className="text-red-500">{errors.emergencyContactNumber}</p>}
+          {errors.emergencyContactNumber && <p className="text-danger02">{errors.emergencyContactNumber}</p>}
         </div>
         <div>
           <label htmlFor="address">Address*</label>
@@ -182,7 +190,7 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.address && <p className="text-red-500">{errors.address}</p>}
+          {errors.address && <p className="text-danger02">{errors.address}</p>}
         </div>
         <div>
           <label htmlFor="patientType">Patient Type*</label>
@@ -197,7 +205,7 @@ const PatientForm: React.FC = () => {
                 <option value="indoor">Indoor</option>
                 <option value="outdoor">Outdoor</option>
               </select>
-              {errors.patientType && <p className="text-red-500">{errors.patientType}</p>}
+              {errors.patientType && <p className="text-danger02">{errors.patientType}</p>}
         </div>
         
       </div>
@@ -207,9 +215,12 @@ const PatientForm: React.FC = () => {
       
         
 
-      <div className="mt-4 px-8 flex justify-center">
+      <div className="mt-4 px-8 flex justify-center gap-8">
         <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary">
           Submit
+        </button>
+        <button className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary" onClick={handleBack}>
+          Back
         </button>
       </div>
     </form>
