@@ -93,7 +93,7 @@ const DeleteForm: React.FC = () => {
   };
 
   return (
-    <form className="w-full mt-8 px-8" onSubmit={handleSubmit}>
+    <form className="w-auto mt-8 px-8" onSubmit={handleSubmit}>
       <div>
         <label htmlFor="patientId">Patient ID*</label>
         <input

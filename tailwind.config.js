@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      height: {
+        '100': '28rem',
+      },
       colors:{
         uiBackground: "#ffffff",
         interactive01: "#0f62fe",

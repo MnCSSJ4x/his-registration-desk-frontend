@@ -70,7 +70,7 @@ const ConsultationForm: React.FC = () => {
   };
 
   return (
-    <form className="w-full mt-8 px-4" onSubmit={handleSubmit}>
+    <form className="w-auto mt-8 px-4" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-8 px-8">
         <div>
           <label htmlFor="patientId">Patient ID*</label>

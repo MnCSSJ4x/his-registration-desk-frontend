@@ -1,14 +1,13 @@
 import React from 'react'
 import Title from '../Components/Title'
-import Records from './Components/Records'
 
-const ViewRecords = () => {
+const ViewTransfers = () => {
   return (
     <div className="flex flex-col justify-center items-center h-auto mt-20">
-        <Title title='Patients'></Title>
-        <Records/>
+        <Title title='Transfers'></Title>
+        
     </div>
   )
 }
 
-export default ViewRecords
+export default ViewTransfers

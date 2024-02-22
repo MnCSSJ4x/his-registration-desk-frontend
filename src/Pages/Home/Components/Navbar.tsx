@@ -10,7 +10,7 @@ const Navbar = () => {
       {/* Navigation links on the right */}
       <div className="flex flex-wrap space-x-4 px-12">
         <p className='text-lg text-text01'>Hi {name}</p>
-        <a href="/about" className="hover:text-hoverPrimaryText text-link01 text-lg">Logout</a>
+        <a href="/" className="hover:text-hoverPrimaryText text-link01 text-lg">Logout</a>
       </div>
     </nav>
   )
