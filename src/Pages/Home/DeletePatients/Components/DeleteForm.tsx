@@ -131,8 +131,9 @@ const DeleteForm: React.FC = () => {
             />
             No
           </label>
-          {errors.isDeleteConfirmed && <p className="text-red-500">{errors.isDeleteConfirmed}</p>}
+         
         </div>
+        {errors.isDeleteConfirmed && <p className="text-danger02">{errors.isDeleteConfirmed}</p>}
       </div>
       <div className="mt-4 px-8 flex justify-center gap-8">
         <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary">
