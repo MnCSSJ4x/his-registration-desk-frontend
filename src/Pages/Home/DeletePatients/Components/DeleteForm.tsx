@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 interface FormData {
   patientId: string;
@@ -11,6 +13,7 @@ interface FormErrors {
 }
 
 const DeleteForm: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     patientId: '',
     isDeleteConfirmed: null,
@@ -20,7 +23,10 @@ const DeleteForm: React.FC = () => {
     patientId: '',
     isDeleteConfirmed: '',
   });
-
+  const handleBack = () => {
+    // Implement your logic to navigate back
+    navigate(-1);
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -138,6 +144,13 @@ const DeleteForm: React.FC = () => {
       <div className="mt-4 px-8 flex justify-center gap-8">
         <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary">
           Submit
+        </button>
+
+        <button
+          className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary"
+          onClick={handleBack}
+        >
+          Back
         </button>
       </div>
     </form>
