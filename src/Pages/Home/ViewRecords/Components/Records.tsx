@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PatientDetails from './PatientDetails';
+
+interface Patient {
+	id: number,
+  patient_id: string;
+  name: string;
+  age: number;
+  gender: string;
+  // Add more fields as needed
+}
 
 const Records = () => {
 	const navigate=useNavigate();
@@ -110,7 +120,8 @@ const Records = () => {
 			gender: "Female",
 		},
 	];
-	
+	const [isPatientViewOpen, setPatientDetails] = useState(false);
+	const [patientSelected,setPatient]=useState<Patient>();
 	const [records, setRecords] = useState<{ id: number; patient_id: string; name: string; age: number; gender: string; }[]>(patients);
   const [searchQuery, setSearchQuery] = useState('');
   // useEffect(() => {
@@ -118,22 +129,24 @@ const Records = () => {
   //   //   .then((response) => response.json())
   //   //   .then((data) => setRecords(data));
   // }, []);
-	const handleView = (id: number) => {
+	const handleView = (id: Patient) => {
     // Navigate to view patient details page
+		setPatientDetails(true);
+		setPatient(id);
     console.log(`Viewing details of patient with ID: ${id}`);
   };
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: Patient) => {
     // Navigate to edit patient details page
     console.log(`Editing details of patient with ID: ${id}`);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: Patient) => {
     // Implement delete functionality
     console.log(`Deleting patient with ID: ${id}`);
   };
 
-  const handleTransfer = (id: number) => {
+  const handleTransfer = (id: Patient) => {
     // Implement transfer functionality
     console.log(`Transferring patient with ID: ${id}`);
   };
@@ -169,10 +182,10 @@ const Records = () => {
               <li>Gender: {record.gender}</li>
             </ul>
 						<div className="mt-4 flex flex-col md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap justify-evenly">
-							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleView(record.id)}>View</button>
-							<button className="bg-inverseSupport03 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleEdit(record.id)}>Edit</button>
-							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleTransfer(record.id)}>Transfer</button>
-							<button className="bg-inverseSupport01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleDelete(record.id)}>Delete</button>
+							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleView(record)}>View</button>
+							<button className="bg-inverseSupport03 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleEdit(record)}>Edit</button>
+							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleTransfer(record)}>Transfer</button>
+							<button className="bg-inverseSupport01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleDelete(record)}>Delete</button>
 						</div>
 
           </div>
@@ -185,6 +198,7 @@ const Records = () => {
       >
         Back
       </button>
+			{patientSelected && <PatientDetails patient={patientSelected} isOpen={isPatientViewOpen} onClose={()=> setPatientDetails(false)}/>}
     </div>
     </div>
   );
