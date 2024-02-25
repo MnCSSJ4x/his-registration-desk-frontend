@@ -26,16 +26,16 @@ const PatientDetails: React.FC<Props> = ({ patient, isOpen, onClose }) => {
 							<h1 className="w-full px-2 font-extrabold text-2xl mb-6">Patient Details for {patient.patient_id}</h1>
               <div className="grid grid-cols-2 gap-4">
                 <div className="px-2">
-                  <span className="text-gray-600">Patient ID:</span> <span className="font-medium">{patient.patient_id}</span>
+                  <span className="text-text01">Patient ID:</span> <span className="font-medium">{patient.patient_id}</span>
                 </div>
                 <div className="px-2">
-                  <span className="text-gray-600">Name:</span> <span className="font-medium">{patient.name}</span>
+                  <span className="text-text01">Name:</span> <span className="font-medium">{patient.name}</span>
                 </div>
                 <div className="px-2">
-                  <span className="text-gray-600">Age:</span> <span className="font-medium">{patient.age}</span>
+                  <span className="text-text01">Age:</span> <span className="font-medium">{patient.age}</span>
                 </div>
                 <div className="px-2">
-                  <span className="text-gray-600">Gender:</span> <span className="font-medium">{patient.gender}</span>
+                  <span className="text-text01">Gender:</span> <span className="font-medium">{patient.gender}</span>
                 </div>
                 {/* Add more fields here */}
               </div>

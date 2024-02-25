@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PatientDetails from './PatientDetails';
+import EditPatientModal from './EditPatientModal';
 
 interface Patient {
 	id: number,
@@ -121,6 +122,7 @@ const Records = () => {
 		},
 	];
 	const [isPatientViewOpen, setPatientDetails] = useState(false);
+	const [isPatientEditOpen, setPatientEdit] = useState(false);
 	const [patientSelected,setPatient]=useState<Patient>();
 	const [records, setRecords] = useState<{ id: number; patient_id: string; name: string; age: number; gender: string; }[]>(patients);
   const [searchQuery, setSearchQuery] = useState('');
@@ -138,9 +140,14 @@ const Records = () => {
 
   const handleEdit = (id: Patient) => {
     // Navigate to edit patient details page
+		setPatientEdit(true);
+		setPatient(id);
     console.log(`Editing details of patient with ID: ${id}`);
   };
-
+	const handleEditSubmit=(updatedPatient: Patient)=>{
+		console.log(updatedPatient);
+		setPatientEdit(false);
+	}
   const handleDelete = (id: Patient) => {
     // Implement delete functionality
     console.log(`Deleting patient with ID: ${id}`);
@@ -194,11 +201,12 @@ const Records = () => {
 			<div className="flex justify-center">
       <button 
         className="bg-interactive01 text-text04 px-4 py-2 rounded-lg m-4 hover:bg-hoverPrimary" 
-        onClick={()=> navigate('/home')}
+        onClick={()=> navigate(-1)}
       >
         Back
       </button>
 			{patientSelected && <PatientDetails patient={patientSelected} isOpen={isPatientViewOpen} onClose={()=> setPatientDetails(false)}/>}
+			{patientSelected && <EditPatientModal patient={patientSelected} isOpen={isPatientEditOpen} onClose={()=> setPatientEdit(false)} onSubmit={(updatedPatient)=>handleEditSubmit(updatedPatient)}/>}
     </div>
     </div>
   );
