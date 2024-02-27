@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import enGB from "date-fns/locale/en-GB";
 
 interface FormData {
   firstName: string;
   lastName: string;
   aabhaId: string;
   aadharId: string;
-  dob: string;
+  dob: Date; // Change the type to Date
   email: string;
   emergencyContactName: string;
   emergencyContactNumber: string;
   patientType: string;
   address: string;
-  [key: string]: string; // Add index signature
+  [key: string]: string | Date; // Add Date type to the index signature
 }
 
 interface FormErrors {
@@ -38,7 +42,7 @@ const PatientForm: React.FC = () => {
     lastName: "",
     aabhaId: "",
     aadharId: "",
-    dob: "",
+    dob: new Date(), // Set initial date value
     email: "",
     emergencyContactName: "",
     emergencyContactNumber: "",
@@ -55,6 +59,13 @@ const PatientForm: React.FC = () => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleDateChange = (date: Date) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      dob: date,
     }));
   };
 
@@ -87,7 +98,7 @@ const PatientForm: React.FC = () => {
           aabhaId: formData.aabhaId,
           aadharId: formData.aadharId,
           emailId: formData.email,
-          dateOfBirth: formData.dob,
+          dateOfBirth: formData.dob.toISOString(), // Convert Date to string
           emergencyContactNumber: formData.emergencyContactNumber,
           gender: "MALE",
           patientType: formData.patientType,
@@ -168,14 +179,19 @@ const PatientForm: React.FC = () => {
         </div>
         <div>
           <label htmlFor="dob">Date of Birth*</label>
-          <input
-            type="text"
-            id="dob"
-            name="dob"
-            value={formData.dob}
-            onChange={handleChange}
-            className="w-full p-2 border focus:border-interactive04"
-          />
+          <div>
+            <DatePicker
+              id="dob"
+              selected={formData.dob}
+              onChange={handleDateChange}
+              dateFormat="dd/MM/yyyy"
+              showYearDropdown
+              yearDropdownItemNumber={15} // Adjust the number of years displayed in the dropdown
+              scrollableYearDropdown
+              className="w-full p-2 border focus:border-interactive04"
+              locale="en-GB" // Set locale for datepicker (useful for dd/mm/yyyy format)
+            />
+          </div>
           {errors.dob && <p className="text-danger02">{errors.dob}</p>}
         </div>
         <div>
