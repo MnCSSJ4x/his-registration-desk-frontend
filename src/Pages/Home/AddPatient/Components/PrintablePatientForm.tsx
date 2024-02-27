@@ -6,13 +6,12 @@ interface FormData {
   lastName: string;
   aabhaId: string;
   aadharId: string;
-  dob: string;
+  dob: Date;
   email: string;
   emergencyContactName: string;
   emergencyContactNumber: string;
   patientType: string;
   address: string;
-  [key: string]: string; // Index signature
 }
 
 interface PatientPrintProps{
@@ -20,6 +19,14 @@ interface PatientPrintProps{
 	isOpen: boolean;
 	onClose: (Set: boolean)=>void;
 }
+const formatDate = (date: Date): string => {
+  // Format the date as needed (e.g., DD/MM/YYYY)
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const PrintablePatientForm: React.FC<PatientPrintProps> = ({patient,isOpen,onClose}) => {
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -47,12 +54,12 @@ const PrintablePatientForm: React.FC<PatientPrintProps> = ({patient,isOpen,onClo
 						<h1 className="w-full px-2 font-extrabold text-2xl mb-6">Patient Details</h1>
 						<div ref={printRef} className="m-2">
 						<div className="grid grid-cols-2 gap-4">
-							{fields.map((field, index) => (
-								<div className="px-2" key={index}>
-										<span className="text-text01">{field.label}:</span>{" "}
-										<span className="font-medium">{field.value}</span>
-									</div>
-								))}
+            {Object.entries(patient).map(([key, value]) => (
+              <div key={key} className="px-2">
+                <span className="text-text01">{key}:</span>{" "}
+                <span className="font-medium">{key === 'dob' ? formatDate(value as Date) : value}</span>
+              </div>
+            ))}
               </div>
 						</div>
 						<div className="flex justify-end mt-1">
