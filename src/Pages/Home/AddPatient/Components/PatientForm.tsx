@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface FormData {
   firstName: string;
@@ -19,24 +20,37 @@ interface FormErrors {
   [key: string]: string;
 }
 
+interface ApiFormData {
+  name: string;
+  aabhaId: string;
+  aadharId: string;
+  emailId: string;
+  dateOfBirth: string;
+  emergencyContactNumber: string;
+  gender?: string;
+  patientType: string;
+}
+
 const PatientForm: React.FC = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    aabhaId: '',
-    aadharId: '',
-    dob: '',
-    email: '',
-    emergencyContactName: '',
-    emergencyContactNumber: '',
-    patientType: '',
-    address: '',
+    firstName: "",
+    lastName: "",
+    aabhaId: "",
+    aadharId: "",
+    dob: "",
+    email: "",
+    emergencyContactName: "",
+    emergencyContactNumber: "",
+    patientType: "",
+    address: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -44,43 +58,59 @@ const PatientForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Check for mandatory fields
-    const mandatoryFields = ['firstName', 'lastName', 'dob', 'email', 'emergencyContactName', 'emergencyContactNumber'];
+    const mandatoryFields = [
+      "firstName",
+      "lastName",
+      "dob",
+      "email",
+      "emergencyContactName",
+      "emergencyContactNumber",
+    ];
     const newErrors: FormErrors = {};
     mandatoryFields.forEach((field) => {
       if (!formData[field]) {
-        newErrors[field] = 'This field is mandatory';
+        newErrors[field] = "This field is mandatory";
       }
     });
     setErrors(newErrors);
 
     // If there are no errors, proceed with the API call
     if (Object.keys(newErrors).length === 0) {
-      // Dummy API call (replace with actual API endpoints)
-      fetch('https://api.example.com/submitFormData', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('API response:', data);
-        })
-        .catch((error) => {
-          console.error('Error during API call:', error);
+      try {
+        // Format the data to match the required JSON format
+        const apiFormData: ApiFormData = {
+          name: `${formData.firstName} ${formData.lastName}`,
+          aabhaId: formData.aabhaId,
+          aadharId: formData.aadharId,
+          emailId: formData.email,
+          dateOfBirth: formData.dob,
+          emergencyContactNumber: formData.emergencyContactNumber,
+          gender: "MALE",
+          patientType: formData.patientType,
+        };
+
+        await axios.post("http://localhost:8082/patient/signup", apiFormData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+
+        // Navigate after successful submission
+        navigate("/success"); // Change the route as needed
+      } catch (error) {
+        console.error("Error during API call:", error);
+      }
     }
   };
 
   //@TODO: Implement your logic to navigate back
   const handleBack = () => {
     // Implement your logic to navigate back
-    navigate(-1); 
+    navigate(-1);
   };
 
   return (
@@ -96,7 +126,9 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.firstName && <p className="text-danger02">{errors.firstName}</p>}
+          {errors.firstName && (
+            <p className="text-danger02">{errors.firstName}</p>
+          )}
         </div>
         <div>
           <label htmlFor="lastName">Last Name*</label>
@@ -108,7 +140,9 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.lastName && <p className="text-danger02">{errors.lastName}</p>}
+          {errors.lastName && (
+            <p className="text-danger02">{errors.lastName}</p>
+          )}
         </div>
         <div>
           <label htmlFor="aabhaId">AABHA ID</label>
@@ -166,10 +200,14 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.emergencyContactName && <p className="text-danger02">{errors.emergencyContactName}</p>}
+          {errors.emergencyContactName && (
+            <p className="text-danger02">{errors.emergencyContactName}</p>
+          )}
         </div>
         <div>
-          <label htmlFor="emergencyContactNumber">Emergency Contact Number*</label>
+          <label htmlFor="emergencyContactNumber">
+            Emergency Contact Number*
+          </label>
           <input
             type="text"
             id="emergencyContactNumber"
@@ -178,7 +216,9 @@ const PatientForm: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
           />
-          {errors.emergencyContactNumber && <p className="text-danger02">{errors.emergencyContactNumber}</p>}
+          {errors.emergencyContactNumber && (
+            <p className="text-danger02">{errors.emergencyContactNumber}</p>
+          )}
         </div>
         <div>
           <label htmlFor="address">Address*</label>
@@ -194,32 +234,36 @@ const PatientForm: React.FC = () => {
         </div>
         <div>
           <label htmlFor="patientType">Patient Type*</label>
-            <select
-                id="patientType"
-                name="patientType"
-                value={formData.patientType}
-                onChange={handleChange}
-                className="w-full p-2 border"
-              >
-                <option value="">Select...</option>
-                <option value="indoor">Indoor</option>
-                <option value="outdoor">Outdoor</option>
-              </select>
-              {errors.patientType && <p className="text-danger02">{errors.patientType}</p>}
+          <select
+            id="patientType"
+            name="patientType"
+            value={formData.patientType}
+            onChange={handleChange}
+            className="w-full p-2 border"
+          >
+            <option value="">Select...</option>
+            <option value="INPATIENT">Indoor</option>
+            <option value="OUTPATIENT">Outdoor</option>
+          </select>
+          {errors.patientType && (
+            <p className="text-danger02">{errors.patientType}</p>
+          )}
         </div>
-        
       </div>
 
-
       {/* Type and Submit button */}
-      
-        
 
       <div className="mt-4 px-8 flex justify-center gap-8">
-        <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary">
+        <button
+          type="submit"
+          className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary"
+        >
           Submit
         </button>
-        <button className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary" onClick={handleBack}>
+        <button
+          className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary"
+          onClick={handleBack}
+        >
           Back
         </button>
       </div>
