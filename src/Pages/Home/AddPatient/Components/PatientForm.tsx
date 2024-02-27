@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PrintablePatientForm from './PrintablePatientForm';
 
 interface FormData {
   firstName: string;
@@ -21,6 +22,7 @@ interface FormErrors {
 
 const PatientForm: React.FC = () => {
   const navigate = useNavigate(); 
+  const [openPrint,setPrint]=useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -35,7 +37,7 @@ const PatientForm: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -56,7 +58,7 @@ const PatientForm: React.FC = () => {
       }
     });
     setErrors(newErrors);
-
+    setPrint(true);
     // If there are no errors, proceed with the API call
     if (Object.keys(newErrors).length === 0) {
       // Dummy API call (replace with actual API endpoints)
@@ -84,6 +86,7 @@ const PatientForm: React.FC = () => {
   };
 
   return (
+    <>
     <form className="w-auto mt-8 px-4" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-8 px-8">
         <div>
@@ -224,6 +227,8 @@ const PatientForm: React.FC = () => {
         </button>
       </div>
     </form>
+    {openPrint && <PrintablePatientForm patient={formData} isOpen={openPrint} onClose={setPrint}/>}
+    </>
   );
 };
 

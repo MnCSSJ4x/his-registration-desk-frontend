@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       height: {
         '100': '28rem',
+        '95': '90%'
       },
       colors:{
         uiBackground: "#ffffff",
