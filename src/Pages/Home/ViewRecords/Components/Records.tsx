@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import PatientDetails from './PatientDetails';
 import EditPatientModal from './EditPatientModal';
 import { Patient,getAge } from '../../../Types/Patient';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { authState } from '../../../../auth/auth';
 
 const Records = () => {
-	const token=useRecoilState(authState);
+	const token=useRecoilValue(authState);
 	const navigate=useNavigate();
 	const [isPatientViewOpen, setPatientDetails] = useState(false);
 	const [isPatientEditOpen, setPatientEdit] = useState(false);
@@ -19,7 +19,7 @@ const Records = () => {
       fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token[0].token}`
+          'Authorization': `Bearer ${token.token}`
         }
       })
       .then(response => {
@@ -30,7 +30,6 @@ const Records = () => {
         }
       })
       .then(data => {
-        console.log(data);
         setRecords(data);
       })
       .catch(error => {
@@ -58,7 +57,7 @@ const Records = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token[0].token}`
+					'Authorization': `Bearer ${token.token}`
         },
 				body: JSON.stringify(updatedPatient)
 

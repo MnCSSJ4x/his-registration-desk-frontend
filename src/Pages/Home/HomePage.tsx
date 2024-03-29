@@ -3,14 +3,14 @@ import Navbar from './Components/Navbar'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import CardSet from './Components/CardSet'
 import { authState } from '../../auth/auth'
-import { useRecoilState } from 'recoil'
+import { useRecoilValue } from 'recoil'
 const HomePage: React.FC = () => {
   const location = useLocation();
   const navigate=useNavigate();
-  const authorized=useRecoilState(authState);
+  const authorized=useRecoilValue(authState);
   // console.log(authorized.token)
   useEffect(()=>{
-    if(authorized[0].token===null){
+    if(authorized===null){
       navigate("/login")
     }
   })

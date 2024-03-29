@@ -3,7 +3,7 @@ import PrintablePatientForm from './PrintablePatientForm';
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { authState } from '../../../../auth/auth';
 
 interface FormData {
@@ -38,7 +38,7 @@ interface ApiFormData {
 
 const PatientForm: React.FC = () => {
   const navigate = useNavigate(); 
-  const token=useRecoilState(authState);
+  const token=useRecoilValue(authState);
   const [openPrint,setPrint]=useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -111,7 +111,7 @@ const PatientForm: React.FC = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token[0].token}`
+            'Authorization': `Bearer ${token.token}`
           },
           body: JSON.stringify(apiFormData)
         })
