@@ -10,10 +10,11 @@ import Navbar from "./Pages/Home/Components/Navbar";
 import EditPatient from "./Pages/Home/EditPatient/EditPatient";
 import ViewRecords from "./Pages/Home/ViewRecords/ViewRecords";
 import ViewTransfers from "./Pages/Home/ViewTransfers/ViewTransfers";
-
+import {RecoilRoot} from 'recoil';
 
 const App = () => {
   return (
+		<RecoilRoot>
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<LandingPage />} />
@@ -28,15 +29,10 @@ const App = () => {
 				</Route>
 			</Routes>
 		</BrowserRouter>
+		</RecoilRoot>
 
    
   )
 }
 
 export default App
-// '/home/addRecords'
-// '/home/addConsultation'
-// '/home/editRecords'
-// '/home/viewRecords'
-// '/home/viewTransfers'
-// '/home/deleteRecords'

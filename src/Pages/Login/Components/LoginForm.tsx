@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { authState } from "../../../auth/auth";
+import { useRecoilState } from "recoil";
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [auth, setAuth] = useRecoilState(authState);
   const navigate = useNavigate();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -15,22 +16,33 @@ const LoginForm: React.FC = () => {
       setError('Please enter both username and password.');
       return;
     }
-
+    const jsonData={"uuid": username, "password": password}
     // Replace with your actual API call
-    const response = await fetch('/api/login', {
+    const response = await fetch(`${process.env.REACT_APP_AUTHENTICATION_URL}/api/v1/auth/authenticate`, {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
+      body: JSON.stringify(jsonData),
+      headers: {
+        'Content-Type': 'application/json' // Set the Content-Type header
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.json(); // Return the promise for the parsed JSON data
+      } else {
+        // Handle login failure directly within the first .then
+        throw new Error('Invalid username or password. Please try again.');
+      }
+    })
+    .then((data) => {
       // Handle successful login
+      console.log(data)
+      setAuth(data);
       setError('');
-      navigate('/landing'); // Navigate to landing page on success
-    } else {
-      // Handle login failure (e.g., display error message)
-      setError('Invalid username or password. Please try again.');
-    }
+      navigate('/home'); // Navigate to landing page on success
+    })
+    .catch((error) => {
+      // Handle any errors (network issues, parsing errors, etc.)
+      setError(error.message);
+    });
   };
 
   const handleForgotPassword = () => {
