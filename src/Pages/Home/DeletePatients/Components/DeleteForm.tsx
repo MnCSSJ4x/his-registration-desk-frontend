@@ -25,7 +25,7 @@ const DeleteForm: React.FC = () => {
   });
   const handleBack = () => {
     // Implement your logic to navigate back
-    navigate(-1);
+    navigate("/home");
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

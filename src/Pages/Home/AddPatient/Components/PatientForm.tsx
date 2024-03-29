@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import PrintablePatientForm from './PrintablePatientForm';
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { registerLocale, setDefaultLocale } from "react-datepicker";
-import enGB from "date-fns/locale/en-GB";
+import { useRecoilState } from 'recoil';
+import { authState } from '../../../../auth/auth';
 
 interface FormData {
   firstName: string;
@@ -14,6 +13,7 @@ interface FormData {
   aadharId: string;
   dob: Date; // Change the type to Date
   email: string;
+  gender: string;
   emergencyContactName: string;
   emergencyContactNumber: string;
   patientType: string;
@@ -38,14 +38,16 @@ interface ApiFormData {
 
 const PatientForm: React.FC = () => {
   const navigate = useNavigate(); 
+  const token=useRecoilState(authState);
   const [openPrint,setPrint]=useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
     aabhaId: "",
     aadharId: "",
-    dob: new Date(), // Set initial date value
+    dob: new Date("1/1/2000"), // Set initial date value
     email: "",
+    gender: "",
     emergencyContactName: "",
     emergencyContactNumber: "",
     patientType: "",
@@ -90,7 +92,6 @@ const PatientForm: React.FC = () => {
       }
     });
     setErrors(newErrors);
-    setPrint(true);
     // If there are no errors, proceed with the API call
     if (Object.keys(newErrors).length === 0) {
       try {
@@ -102,18 +103,30 @@ const PatientForm: React.FC = () => {
           emailId: formData.email,
           dateOfBirth: formData.dob.toISOString(), // Convert Date to string
           emergencyContactNumber: formData.emergencyContactNumber,
-          gender: "MALE",
+          gender: formData.gender,
           patientType: formData.patientType,
         };
 
-        await axios.post("http://localhost:8082/patient/signup", apiFormData, {
+        await fetch(`${process.env.REACT_APP_DB_URL}/patient/signup`, {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token[0].token}`
           },
-        });
+          body: JSON.stringify(apiFormData)
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to post data');
+          }
+          console.log('Data posted successfully:', response.status);
+          return response.text();
+        }).then((responseText)=>{
+          setPrint(true);
+          console.log(responseText)
+          alert(responseText)
+        })
 
-        // Navigate after successful submission
-        navigate("/success"); // Change the route as needed
       } catch (error) {
         console.error("Error during API call:", error);
       }
@@ -123,7 +136,7 @@ const PatientForm: React.FC = () => {
   //@TODO: Implement your logic to navigate back
   const handleBack = () => {
     // Implement your logic to navigate back
-    navigate(-1);
+    navigate("/home");
   };
 
   return (
@@ -192,7 +205,6 @@ const PatientForm: React.FC = () => {
               yearDropdownItemNumber={15} // Adjust the number of years displayed in the dropdown
               scrollableYearDropdown
               className="w-full p-2 border focus:border-interactive04"
-              locale="en-GB" // Set locale for datepicker (useful for dd/mm/yyyy format)
             />
           </div>
           {errors.dob && <p className="text-danger02">{errors.dob}</p>}
@@ -267,6 +279,19 @@ const PatientForm: React.FC = () => {
           {errors.patientType && (
             <p className="text-danger02">{errors.patientType}</p>
           )}
+        </div>
+        <div>
+          <label htmlFor="gender">Gender</label>
+          <select id="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="w-full p-2 border focus:border-interactive04">
+              <option value="">Select...</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Others</option>
+          </select>
         </div>
       </div>
 

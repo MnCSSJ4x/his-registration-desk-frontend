@@ -66,7 +66,7 @@ const ConsultationForm: React.FC = () => {
   // Handler for the back button
   const handleBack = () => {
     // Implement your logic to navigate back
-    navigate(-1);
+    navigate("/home");
   };
 
   return (

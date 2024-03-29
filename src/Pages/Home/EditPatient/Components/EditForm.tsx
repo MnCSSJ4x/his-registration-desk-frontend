@@ -94,7 +94,7 @@ const EditForm: React.FC = () => {
   //@TODO: Implement your logic to navigate back
   const handleBack = () => {
     // Implement your logic to navigate back
-    navigate(-1);
+    navigate("/home");
   };
 
   return (

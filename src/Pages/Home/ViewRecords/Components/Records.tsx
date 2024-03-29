@@ -2,135 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PatientDetails from './PatientDetails';
 import EditPatientModal from './EditPatientModal';
-
-interface Patient {
-	id: number,
-  patient_id: string;
-  name: string;
-  age: number;
-  gender: string;
-  // Add more fields as needed
-}
+import { Patient,getAge } from '../../../Types/Patient';
+import { useRecoilState } from 'recoil';
+import { authState } from '../../../../auth/auth';
 
 const Records = () => {
+	const token=useRecoilState(authState);
 	const navigate=useNavigate();
-	const patients = [
-		{
-			id: 1,
-			patient_id: "P12345",
-			name: "John Doe",
-			age: 30,
-			gender: "Male",
-		},
-		{
-			id: 2,
-			patient_id: "P54321",
-			name: "Jane Doe",
-			age: 25,
-			gender: "Female",
-		},
-		{
-			id: 3,
-			patient_id: "P78901",
-			name: "Alice Smith",
-			age: 40,
-			gender: "Female",
-		},
-		{
-			id: 4,
-			patient_id: "P98765",
-			name: "Bob Johnson",
-			age: 35,
-			gender: "Male",
-		},
-		{
-			id: 5,
-			patient_id: "P24680",
-			name: "Michael Williams",
-			age: 45,
-			gender: "Male",
-		},
-		{
-			id: 6,
-			patient_id: "P13579",
-			name: "Emily Brown",
-			age: 28,
-			gender: "Female",
-		},
-		{
-			id: 7,
-			patient_id: "P11223",
-			name: "William Taylor",
-			age: 55,
-			gender: "Male",
-		},
-		{
-			id: 8,
-			patient_id: "P44556",
-			name: "Sophia Martinez",
-			age: 22,
-			gender: "Female",
-		},
-		{
-			id: 9,
-			patient_id: "P99887",
-			name: "Daniel Anderson",
-			age: 38,
-			gender: "Male",
-		},
-		{
-			id: 10,
-			patient_id: "P77889",
-			name: "Olivia Thomas",
-			age: 32,
-			gender: "Female",
-		},
-		{
-			id: 11,
-			patient_id: "P11224",
-			name: "David Jackson",
-			age: 41,
-			gender: "Male",
-		},
-		{
-			id: 12,
-			patient_id: "P66776",
-			name: "Emma White",
-			age: 29,
-			gender: "Female",
-		},
-		{
-			id: 13,
-			patient_id: "P33445",
-			name: "Josephine Harris",
-			age: 47,
-			gender: "Female",
-		},
-		{
-			id: 14,
-			patient_id: "P55789",
-			name: "James Brown",
-			age: 50,
-			gender: "Male",
-		},
-		{
-			id: 15,
-			patient_id: "P99887",
-			name: "Ava Lee",
-			age: 27,
-			gender: "Female",
-		},
-	];
 	const [isPatientViewOpen, setPatientDetails] = useState(false);
 	const [isPatientEditOpen, setPatientEdit] = useState(false);
 	const [patientSelected,setPatient]=useState<Patient>();
-	const [records, setRecords] = useState<{ id: number; patient_id: string; name: string; age: number; gender: string; }[]>(patients);
+	const [records, setRecords] = useState< Patient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  // useEffect(() => {
-  //   // fetch('/api/records')
-  //   //   .then((response) => response.json())
-  //   //   .then((data) => setRecords(data));
-  // }, []);
+  useEffect(() => {
+    if (token) { // Ensure token is available before making the request
+      fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token[0].token}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch patient records');
+        }
+      })
+      .then(data => {
+        console.log(data);
+        setRecords(data);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+    }
+  }, []);
 	const handleView = (id: Patient) => {
     // Navigate to view patient details page
 		setPatientDetails(true);
@@ -146,14 +53,43 @@ const Records = () => {
   };
 	const handleEditSubmit=(updatedPatient: Patient)=>{
 		console.log(updatedPatient);
-		setPatientEdit(false);
+		if (token) { // Ensure token is available before making the request
+      fetch(`${process.env.REACT_APP_DB_URL}/patient/${updatedPatient.patientId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token[0].token}`
+        },
+				body: JSON.stringify(updatedPatient)
+
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch patient records');
+        }
+      })
+      .then((data) => {
+        updateRecord(data);
+      })
+      .catch((error) => {
+        console.log(error.message);
+				alert(error.message)
+      });
+			setPatientEdit(false);
+			setPatient(undefined);
+    }
+		else{
+			alert("Session timed out");
+		}
 	}
-  const handleDelete = (id: Patient) => {
+  const handleDelete = (id: string) => {
     // Implement delete functionality
     console.log(`Deleting patient with ID: ${id}`);
   };
 
-  const handleTransfer = (id: Patient) => {
+  const handleTransfer = (id: string) => {
     // Implement transfer functionality
     console.log(`Transferring patient with ID: ${id}`);
   };
@@ -161,11 +97,26 @@ const Records = () => {
 		setSearchQuery(event.target.value);
 	};
 	
+	const updateRecord = (updatedRecord: Patient) => {
+		// Find the index of the edited record in the array
+		const index = records.findIndex(record => record.patientId === updatedRecord.patientId);
+	
+		if (index !== -1) {
+			// Create a copy of the records array
+			const updatedRecords = [...records];
+			// Replace the record at the found index with the updated record
+			updatedRecords[index] = updatedRecord;
+			// Set the state with the updated array
+			setRecords(updatedRecords);
+		} else {
+			console.error("Record not found");
+		}
+	};
 
-  const filteredRecords = records.filter((record) => {
-    // Implement your search logic here
-    return record.name.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+	
+	const filteredRecords = Array.isArray(records) ? records.filter((record) => {
+		return record.name.toLowerCase().includes(searchQuery.toLowerCase());
+	}) : [];
 
   return (
     <div className="flex flex-col w-auto mt-8 px-4">
@@ -177,22 +128,27 @@ const Records = () => {
           onChange={handleSearchChange}
         />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-8 h-100 overflow-scroll shadow-md p-4">
-        {filteredRecords.map((record) => (
+        {filteredRecords?.map((record) => (
           <div
-            key={record.id}
+            key={record.patientId}
             className=" bg-white p-2 rounded-md shadow-md transition duration-300 transform hover:scale-105 hover:shadow-xl"
           >
             <h2 className="text-lg px-4 font-semibold mb-2">{record.name}</h2>
             <ul className="text-sm px-4 text-gray-500">
-							{/* {console.log(record)} */}
-              <li>Age: {record.age}</li>
-              <li>Gender: {record.gender}</li>
+							<li><strong>Aabha ID:</strong> {record.aabhaId}</li>
+							<li><strong>Aadhar ID:</strong> {record.aadharId}</li>
+							<li><strong>Email:</strong> {record.emailId}</li>
+							<li><strong>Age:</strong> {getAge(record.dateOfBirth)}</li>
+							<li><strong>Emergency Contact Number:</strong> {record.emergencyContactNumber}</li>
+							<li><strong>Gender:</strong> {record.gender}</li>
+							<li><strong>Patient Type:</strong> {record.patientType}</li>
+							<li><strong>Discharge Status:</strong> {record.dischargeStatus}</li>
             </ul>
 						<div className="mt-4 flex flex-col md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap justify-evenly">
 							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleView(record)}>View</button>
 							<button className="bg-inverseSupport03 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleEdit(record)}>Edit</button>
-							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleTransfer(record)}>Transfer</button>
-							<button className="bg-inverseSupport01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleDelete(record)}>Delete</button>
+							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleTransfer(record.patientId)}>Transfer</button>
+							<button className="bg-inverseSupport01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleDelete(record.patientId)}>Delete</button>
 						</div>
 
           </div>
@@ -201,7 +157,7 @@ const Records = () => {
 			<div className="flex justify-center">
       <button 
         className="bg-interactive01 text-text04 px-4 py-2 rounded-lg m-4 hover:bg-hoverPrimary" 
-        onClick={()=> navigate(-1)}
+        onClick={()=> navigate("/home")}
       >
         Back
       </button>

@@ -1,4 +1,5 @@
 import React, {useRef} from 'react';
+import { useNavigate } from 'react-router-dom';
 // import { useReactToPrint } from 'react-to-print';
 
 interface FormData {
@@ -29,8 +30,9 @@ const formatDate = (date: Date): string => {
 
 const PrintablePatientForm: React.FC<PatientPrintProps> = ({patient,isOpen,onClose}) => {
   const printRef = useRef<HTMLDivElement>(null);
-
-  const handlePrint = ()=> {window.print()}
+	const navigate=useNavigate();
+  const handlePrint = ()=> {window.print(); navigate("/home")}
+  const handleClose = ()=> {onClose(false); navigate("/home")}
 	// useReactToPrint({
 	// 	content: ()=> printRef.current,
 	// })
@@ -71,7 +73,7 @@ const PrintablePatientForm: React.FC<PatientPrintProps> = ({patient,isOpen,onClo
 						</button>
 						<button
 							className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500"
-							onClick={()=> onClose(false)}
+							onClick={()=> handleClose()}
 						>
 							Close
 						</button>
