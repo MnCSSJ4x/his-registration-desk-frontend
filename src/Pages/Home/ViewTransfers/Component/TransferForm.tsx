@@ -15,6 +15,7 @@ interface FormData {
 const TransferForm: React.FC = () => {
   const navigate = useNavigate();
   const token = useRecoilValue(authState);
+  const [isOpen,setOpen]=useState(false);
   const [formData, setFormData] = useState<FormData>({
     patientId: '',
     from: '',
@@ -118,7 +119,7 @@ const TransferForm: React.FC = () => {
 
   return (
     <div>
-      <div className="mt-4">
+      <div className="mt-4" onFocus={()=>setOpen(true)}>
         <label>Search and select a patient:</label>
         <input
           type="text"
@@ -127,13 +128,15 @@ const TransferForm: React.FC = () => {
           onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
           className="w-full p-2 border focus:border-interactive04"
         />
-        {filteredPatients.length > 0 &&
-          <div className="absolute w-1/4 bg-white border border-gray-300 rounded-lg shadow-md mt-1 z-10">
+        {filteredPatients.length > 0 && isOpen&&
+          <div className="absolute w-1/4 bg-white border border-gray-300 rounded-lg shadow-md mt-1 z-10 h-1/4 overflow-auto">
             {filteredPatients.map(patient => (
               <div
                 key={patient.patientId}
                 className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSelectPatient(patient)}
+                onClick={() => {
+                  handleSelectPatient(patient);
+                  setOpen(false);}}
               >
                 {patient.name + "-" + patient.patientId}
               </div>
@@ -141,7 +144,7 @@ const TransferForm: React.FC = () => {
           </div>
         }
       </div>
-      <form className="w-full mt-8 px-4" onSubmit={handleSubmit}>
+      <form className="w-full mt-8 px-4" onSubmit={handleSubmit} onClick={()=>setOpen(false)}>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="patientId">Patient ID*</label>

@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PatientSearchBar from './PatientSearchBar';
+import DoctorSearchBar from './DoctorSearchBar';
+import { Patient } from '../../../Types/Patient';
+import { useRecoilValue } from 'recoil';
+import { authState } from '../../../../auth/auth';
+
+interface Doctor {
+  dateOfBirth: string;
+  employeeId: string;
+  employeeStatus: "CHECKED_IN"|"CHECKED_OUT";
+  employeeType: string;
+  lastCheckIn: string;
+  name: string;
+}
 
 interface FormData {
   patientId: string;
   doctorName: string;
-  department: string;
-  [key: string]: string;
+  doctor: Doctor|null;
+  patient: Patient|null
 }
 
 interface FormErrors {
@@ -16,57 +30,51 @@ const ConsultationForm: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     patientId: '',
+    patient: null,
     doctorName: '',
-    department: '',
+    doctor: null
   });
-
+  const token=useRecoilValue(authState);
   const [errors, setErrors] = useState<FormErrors>({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Check for mandatory fields
-    const mandatoryFields = ['patientId', 'department'];
-    const newErrors: FormErrors = {};
-    mandatoryFields.forEach((field) => {
-      if (!formData[field]) {
-        newErrors[field] = 'This field is mandatory';
+    // Handle form submission
+    console.log(formData)
+    fetch(`${process.env.REACT_APP_DB2_URL}/consultation/addConsultation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token.token}`
+      },
+      body: JSON.stringify({doctorId: formData.doctorName, patientId: formData.patientId})
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to post data');
       }
-    });
-    setErrors(newErrors);
-
-    // If there are no errors, proceed with the API call
-    if (Object.keys(newErrors).length === 0) {
-      // Dummy API call (replace with actual API endpoints)
-      fetch('https://api.example.com/submitFormData', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('API response:', data);
-        })
-        .catch((error) => {
-          console.error('Error during API call:', error);
-        });
-    }
+      console.log('Data posted successfully:', response.status);
+    })
   };
 
-  // Handler for the back button
   const handleBack = () => {
-    // Implement your logic to navigate back
-    navigate("/home");
+    navigate('/home');
+  };
+
+  const handlePatientSelect = (patient: Patient) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      patientId: patient.patientId,
+      patient: patient
+    }));
+  };
+
+  const handleDoctorSelect = (doctor: Doctor) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      doctor: doctor,
+      doctorID: doctor.employeeId
+    }));
   };
 
   return (
@@ -74,43 +82,13 @@ const ConsultationForm: React.FC = () => {
       <div className="grid grid-cols-2 gap-8 px-8">
         <div>
           <label htmlFor="patientId">Patient ID*</label>
-          <input
-            type="text"
-            id="patientId"
-            name="patientId"
-            value={formData.patientId}
-            onChange={handleChange}
-            className="w-full p-2 border focus:border-interactive04"
-          />
+          <PatientSearchBar onSelectPatient={handlePatientSelect} />
           {errors.patientId && <p className="text-danger02">{errors.patientId}</p>}
         </div>
         <div>
-          <label htmlFor="doctorName">Doctor Name</label>
-          <input
-            type="text"
-            id="doctorName"
-            name="doctorName"
-            value={formData.doctorName}
-            onChange={handleChange}
-            className="w-full p-2 border focus:border-interactive04"
-          />
-        </div>
-        <div>
-          <label htmlFor="department">Department*</label>
-          <select
-            id="department"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            className="w-full p-2 border"
-          >
-            <option value="">Select...</option>
-            <option value="Cardiology">Cardiology</option>
-            <option value="Orthopedics">Orthopedics</option>
-            <option value="Gynecology">Gynecology</option>
-            {/* Add more department options as needed */}
-          </select>
-          {errors.department && <p className="text-danger02">{errors.department}</p>}
+          <label htmlFor="doctorName">Doctor Name*</label>
+          <DoctorSearchBar onSelectDoctor={handleDoctorSelect} />
+          {errors.doctorName && <p className="text-danger02">{errors.doctorName}</p>}
         </div>
       </div>
 
@@ -123,7 +101,8 @@ const ConsultationForm: React.FC = () => {
         </button>
       </div>
     </form>
-  );
-};
-
-export default ConsultationForm;
+    );
+  };
+  
+  export default ConsultationForm;
+  

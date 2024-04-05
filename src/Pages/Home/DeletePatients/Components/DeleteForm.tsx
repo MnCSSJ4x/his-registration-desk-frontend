@@ -18,6 +18,7 @@ interface FormErrors {
 const DeleteForm: React.FC = () => {
   const token=useRecoilValue(authState)
   const navigate = useNavigate();
+  const [isOpen,setOpen]=useState(false);
   const [formData, setFormData] = useState<FormData>({
     patientId: '',
     isDeleteConfirmed: null,
@@ -149,15 +150,19 @@ const DeleteForm: React.FC = () => {
           placeholder="Search patients..."
           value={formData.patientId}
           onChange={handleChange}
+          onFocus={()=>setOpen(true)}
           className="w-full p-2 border focus:border-interactive04"
         />
-        {filteredPatients.length > 0 &&
-          <div className="absolute w-1/4 bg-white border border-gray-300 rounded-lg shadow-md mt-1">
+        {filteredPatients.length > 0 && isOpen &&
+          <div className="absolute w-1/4 bg-white border border-gray-300 rounded-lg shadow-md mt-1 z-10 overflow-auto h-1/4">
             {filteredPatients.map(patient => (
               <div
                 key={patient.patientId}
                 className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSelectPatient(patient)}
+                onClick={() => {
+                  handleSelectPatient(patient);
+                  setOpen(false);
+                }}
               >
                 {patient.name+"-"+patient.patientId}
               </div>
