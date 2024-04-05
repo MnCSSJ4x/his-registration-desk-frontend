@@ -1,184 +1,129 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface FormData {
-  patientId: string;
-  fields: { fieldName: string; value: string }[];
+import { Patient } from '../../../Types/Patient';
+import { useRecoilValue } from 'recoil';
+import { authState } from '../../../../auth/auth';
+import DatePicker from 'react-datepicker';
+interface Props {
+  patient: Patient;
+  updateRecord: (patient: Patient)=>void;
+  setClose: (val: Boolean)=>void
 }
-
-interface FormErrors {
-  patientId: string;
-  fields: { fieldName: string; value: string }[];
-}
-
-const EditForm: React.FC = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState<FormData>({
-    patientId: '',
-    fields: [{ fieldName: '', value: '' }],
-  });
-
-  const [errors, setErrors] = useState<FormErrors>({
-    patientId: '',
-    fields: [],
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => {
-      const updatedFields = [...prevData.fields];
-      updatedFields[index] = { ...updatedFields[index], [name]: value };
-      return { ...prevData, fields: updatedFields };
-    });
-  };
-
-  const handleAddField = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      fields: [...prevData.fields, { fieldName: '', value: '' }],
+const EditForm: React.FC<Props> = ({patient,updateRecord,setClose}) => {
+  const token=useRecoilValue(authState)
+  const [editedPatient, setEditedPatient] = useState<Patient>(patient);
+  const handleInputChange = (name: string, value: any) => {
+    setEditedPatient(prevState => ({
+      ...prevState,
+      [name]: value,
     }));
   };
-
-  const handleRemoveField = (index: number) => {
-    setFormData((prevData) => {
-      const updatedFields = [...prevData.fields];
-      updatedFields.splice(index, 1);
-      return { ...prevData, fields: updatedFields };
-    });
+  const handleDateChange = ( date: Date) => {
+    // Update the state with the new selected date
+    setEditedPatient((prevState) => ({
+      ...prevState,
+      dateOfBirth: date.toISOString(), // Convert the date to ISO string format before updating the state
+    }));
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(()=>{
+    setEditedPatient(patient)
+  },[patient])
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Check for mandatory fields
-    const newErrors: FormErrors = {
-      patientId: '',
-      fields: [],
-    };
-
-    if (!formData.patientId) {
-      newErrors.patientId = 'Patient ID is mandatory';
-    }
-
-    formData.fields.forEach((field, index) => {
-      if (!field.fieldName || !field.value) {
-        newErrors.fields[index] = {
-          fieldName: 'Field name is mandatory',
-          value: 'Value is mandatory',
-        };
-      }
-    });
-
-    setErrors(newErrors);
-
-    // If there are no errors, proceed with the API call
-    if (Object.values(newErrors).every((error) => !error) && formData.fields.length > 0) {
-      // Dummy API call (replace with actual API endpoints)
-      fetch('https://api.example.com/submitEditData', {
-        method: 'POST',
+    console.log(editedPatient);
+		if (token) { // Ensure token is available before making the request
+      fetch(`${process.env.REACT_APP_DB_URL}/patient/${editedPatient.patientId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token.token}`
         },
-        body: JSON.stringify(formData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('API response:', data);
-        })
-        .catch((error) => {
-          console.error('Error during API call:', error);
-        });
-    }
-  };
+				body: JSON.stringify(editedPatient)
 
-  //@TODO: Implement your logic to navigate back
-  const handleBack = () => {
-    // Implement your logic to navigate back
-    navigate("/home");
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch patient records');
+        }
+      })
+      .then((data) => {
+        updateRecord(data);
+      })
+      .catch((error) => {
+        console.log(error.message);
+				alert(error.message)
+      });
+    }
+		else{
+			alert("Session timed out");
+		}
   };
 
   return (
-    <form className="w-full mt-8 px-4" onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="patientId">Patient ID*</label>
-        <input
-          type="text"
-          id="patientId"
-          name="patientId"
-          value={formData.patientId}
-          onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
-          className="w-full p-2 border focus:border-interactive04"
-        />
-        {errors.patientId && <p className="text-red-500">{errors.patientId}</p>}
-      </div>
+    <>
+    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-md shadow-md transition duration-300 transform hover:scale-105">
+                <div className="grid grid-cols-2 gap-4">
+                {Object.entries(editedPatient).map(([key, value]) => (
+                    <div key={key} className="px-2 flex items-center">
+                      <label htmlFor={key} className="text-text01 font-bold mr-2">
+                        {key.charAt(0).toUpperCase() + key.slice(1)}:
+                      </label>
+                      {key === "dateOfBirth" ? (
+                        <DatePicker
+                          id={key}
+                          name={key}
+                          dateFormat="dd/MM/yyyy"
+                          showYearDropdown
+                          yearDropdownItemNumber={15}
+                          scrollableYearDropdown
+                          selected={new Date(value)} // Assuming value is a valid date string
+                          onChange={(value:Date) => handleDateChange(value)} // Pass key and selected date to handleDateChange
+                          className="border border-overlay01 rounded-lg focus:outline-overlay01 px-2 py-1" // Add any additional className for styling
+                        />
+                      ) : key === "gender" ? (
+                        <select
+                          id={key}
+                          name={key}
+                          value={value as string}
+                          onChange={(e) => handleInputChange(e.target.name, e.target.value)}
+                          className="border border-overlay01 rounded-lg focus:outline-overlay01 px-2 py-1" // Add any additional className for styling
+                        >
+                          <option value="MALE">Male</option>
+                          <option value="FEMALE">Female</option>
+                          <option value="OTHER">Others</option>
+                        </select>
+                      ) : key === "patientType" ? (
+                        <select
+                          id={key}
+                          name={key}
+                          value={value as string}
+                          onChange={(e) => handleInputChange(e.target.name, e.target.value)}
+                          className="border border-overlay01 rounded-lg focus:outline-overlay01 px-2 py-1" // Add any additional className for styling
+                        >
+                          <option value="INPATIENT">Inpatient</option>
+                          <option value="OUTPATIENT">Outpatient</option>
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          id={key}
+                          name={key}
+                          value={value}
+                          onChange={(e)=>handleInputChange(e.target.name,e.target.value)}
+                          className="border border-overlay01 rounded-lg focus:outline-overlay01 px-2 py-1" // Add any additional className for styling
+                        />
+                      )}
+                    </div>
+                  ))}
 
-      {formData.fields.map((field, index) => (
-        <div key={index} className="flex flex-cols gap-4">
-          <div>
-            <label htmlFor={`fieldName-${index}`}>Field to Edit*</label>
-            <select
-              id={`fieldName-${index}`}
-              name="fieldName"
-              value={field.fieldName}
-              onChange={(e) => handleChange(e, index)}
-              className="w-full p-2 border"
-            >
-              <option value="">Select...</option>
-              <option value="aabhaId">AABHA ID</option>
-              <option value="aadharId">AADHAR ID</option>
-              <option value="dob">Date of Birth</option>
-              <option value="email">Email ID</option>
-              <option value="emergencyContactName">Emergency Contact Name</option>
-              <option value="emergencyContactNumber">Emergency Contact Number</option>
-              <option value="patientType">Patient Type</option>
-              <option value="address">Address</option>
-            </select>
-            {errors.fields[index] && errors.fields[index].fieldName && (
-              <p className="text-red-500">{errors.fields[index].fieldName}</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor={`value-${index}`}>Value*</label>
-            <input
-              type="text"
-              id={`value-${index}`}
-              name="value"
-              value={field.value}
-              onChange={(e) => handleChange(e, index)}
-              className="w-full p-2 border focus:border-interactive04"
-            />
-            {errors.fields[index] && errors.fields[index].value && (
-              <p className="text-red-500">{errors.fields[index].value}</p>
-            )}
-          </div>
-          <div className='py-6'>
-          <button
-              type="button"
-              onClick={() => handleRemoveField(index)}
-              className="bg-danger01 text-white p-2 rounded"
-            >
-              Remove
-            </button>
-          </div>
-          
-        </div>
-      ))}
-
-      
-
-      <div className="mt-4 px-8 flex justify-center gap-8">
-     
-        <button type="button" onClick={handleAddField} className="bg-inverseSupport02 text-text04 px-16 py-2 rounded-lg hover:bg-support02">
-          Add Field
-        </button>
-        <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary">
-          Submit
-        </button>
-        <button className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary" onClick={handleBack}>
-          Back
-        </button>
-      </div>
-    </form>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <button type="submit" className="bg-interactive01 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none">Submit</button>
+                </div>
+              </form>
+              </>
   );
 };
 

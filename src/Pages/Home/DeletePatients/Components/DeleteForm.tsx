@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useRecoilValue } from 'recoil';
+import { authState } from '../../../../auth/auth';
+import { Patient } from '../../../Types/Patient';
 
 interface FormData {
   patientId: string;
   isDeleteConfirmed: boolean | null;
+  patient: Patient | null
 }
 
 interface FormErrors {
@@ -13,20 +16,48 @@ interface FormErrors {
 }
 
 const DeleteForm: React.FC = () => {
+  const token=useRecoilValue(authState)
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     patientId: '',
     isDeleteConfirmed: null,
+    patient: null
   });
 
   const [errors, setErrors] = useState<FormErrors>({
     patientId: '',
     isDeleteConfirmed: '',
   });
+
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
+  const fetchPatients = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token.token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch patients');
+      }
+      const data = await response.json();
+      setPatients(data);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    }
+  };
+
   const handleBack = () => {
-    // Implement your logic to navigate back
     navigate("/home");
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -47,10 +78,18 @@ const DeleteForm: React.FC = () => {
     });
   };
 
+  const handleSelectPatient = (selectedPatient: Patient) => {
+
+    setFormData({
+      ...formData,
+      patientId: selectedPatient.patientId,
+      patient: selectedPatient
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check for mandatory fields
     const newErrors: FormErrors = {
       patientId: '',
       isDeleteConfirmed: '',
@@ -66,51 +105,65 @@ const DeleteForm: React.FC = () => {
 
     setErrors(newErrors);
 
-    // If there are no errors, proceed with the API call
     if (Object.values(newErrors).every((error) => !error)) {
-      // Dummy API call to validate the radio button selection
       if (formData.isDeleteConfirmed !== null) {
-        // Dummy API call (replace with actual API endpoints)
-        fetch('https://api.example.com/submitDeleteRequest', {
-          method: 'POST',
+        // Proceed with deletion
+        fetch(`${process.env.REACT_APP_DB_URL}/patient/${formData.patientId}`, {
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            patientId: formData.patientId,
-            isDeleteConfirmed: formData.isDeleteConfirmed,
-          }),
+          body: JSON.stringify({}),
         })
-          .then((response) => response.json())
-          .then((data) => {
-            // Display toast based on API response
-            if (data.success) {
-              alert('Delete request successful. Display a success toast.');
-            } else {
-              alert('Delete request failed. Display a failure toast.');
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
             }
+            throw new Error('Failed to delete patient');
+          })
+          .then((data) => {
+            alert('Patient deleted successfully.');
+            navigate("/home");
           })
           .catch((error) => {
-            console.error('Error during API call:', error);
-            alert('Error during API call. Display a failure toast.');
+            console.error('Error deleting patient:', error);
+            alert('Failed to delete patient. Please try again.');
           });
       }
     }
   };
 
+  useEffect(() => {
+    // Filter patients based on the search term
+    setFilteredPatients(patients.filter(patient =>
+      patient.name.toLowerCase().includes(formData.patientId.toLowerCase())
+    ));
+  }, [formData.patientId, patients]);
+
   return (
     <form className="w-auto mt-8 px-8" onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="patientId">Patient ID*</label>
+      <div className="mt-4">
+        <label>Search and select a patient:</label>
         <input
           type="text"
-          id="patientId"
-          name="patientId"
+          placeholder="Search patients..."
           value={formData.patientId}
           onChange={handleChange}
           className="w-full p-2 border focus:border-interactive04"
         />
-        {errors.patientId && <p className="text-danger02">{errors.patientId}</p>}
+        {filteredPatients.length > 0 &&
+          <div className="absolute w-1/4 bg-white border border-gray-300 rounded-lg shadow-md mt-1">
+            {filteredPatients.map(patient => (
+              <div
+                key={patient.patientId}
+                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSelectPatient(patient)}
+              >
+                {patient.name+"-"+patient.patientId}
+              </div>
+            ))}
+          </div>
+        }
       </div>
       <div className="mt-4">
         <label>Do you want to delete the record? This action is irreversible.</label>
@@ -137,7 +190,6 @@ const DeleteForm: React.FC = () => {
             />
             No
           </label>
-         
         </div>
         {errors.isDeleteConfirmed && <p className="text-danger02">{errors.isDeleteConfirmed}</p>}
       </div>
@@ -145,7 +197,6 @@ const DeleteForm: React.FC = () => {
         <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary">
           Submit
         </button>
-
         <button
           className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary"
           onClick={handleBack}
