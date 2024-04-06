@@ -17,7 +17,7 @@ interface Doctor {
 
 interface FormData {
   patientId: string;
-  doctorName: string;
+  doctorID: string;
   doctor: Doctor|null;
   patient: Patient|null
 }
@@ -31,7 +31,7 @@ const ConsultationForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     patientId: '',
     patient: null,
-    doctorName: '',
+    doctorID: '',
     doctor: null
   });
   const token=useRecoilValue(authState);
@@ -41,19 +41,22 @@ const ConsultationForm: React.FC = () => {
     e.preventDefault();
     // Handle form submission
     console.log(formData)
+    console.log(JSON.stringify({patientId: formData.patientId, doctorId: formData.doctorID}))
     fetch(`${process.env.REACT_APP_DB2_URL}/consultation/addConsultation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token.token}`
       },
-      body: JSON.stringify({doctorId: formData.doctorName, patientId: formData.patientId})
+      body: JSON.stringify({patientId: formData.patientId, doctorId: formData.doctorID})
     })
     .then(response => {
       if (!response.ok) {
         throw new Error('Failed to post data');
       }
       console.log('Data posted successfully:', response.status);
+      alert("Consultation added!")
+      navigate("/home")
     })
   };
 

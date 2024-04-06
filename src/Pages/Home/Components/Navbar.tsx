@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const name = "John Doe";
+  const name = "Desk";
   const navigate=useNavigate();
   const [auth,setAuth]=useRecoilState(authState);
   const handleLogout= ()=>{
