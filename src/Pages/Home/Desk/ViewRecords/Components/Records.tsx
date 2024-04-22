@@ -5,12 +5,19 @@ import EditPatientModal from './EditPatientModal';
 import { Patient,getAge } from '../../../../Types/Patient';
 import { useRecoilValue } from 'recoil';
 import { authState } from '../../../../../auth/auth';
-
+import TransferPatientModal from './TransferPatientModal';
+interface FormData {
+  patientId: string;
+  from: string;
+  to: string;
+  patient: Patient | null;
+}
 const Records = () => {
 	const token=useRecoilValue(authState);
 	const navigate=useNavigate();
 	const [isPatientViewOpen, setPatientDetails] = useState(false);
 	const [isPatientEditOpen, setPatientEdit] = useState(false);
+	const [isPatientTransferOpen, setPatientTransfer] = useState(false);
 	const [patientSelected,setPatient]=useState<Patient>();
 	const [records, setRecords] = useState< Patient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -88,9 +95,35 @@ const Records = () => {
     console.log(`Deleting patient with ID: ${id}`);
   };
 
-  const handleTransfer = (id: string) => {
+  const handleTransfer = (id: Patient) => {
     // Implement transfer functionality
     console.log(`Transferring patient with ID: ${id}`);
+    setPatientTransfer(true);
+    setPatient(id);
+  };
+  const handleTransferSubmit = (formData: FormData) => {
+      // Proceed with the transfer
+      fetch(`${process.env.REACT_APP_DB_URL}/patient/transfer/${formData.patient?.patientId}?newPatientType=${formData.to}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('API response:', data);
+        // Proceed with the transfer
+        console.log('Transfer form data:', formData);
+        updateRecord(data);
+        setPatientTransfer(false);
+        setPatient(undefined);
+        // Reset form data after submission
+        alert("Patient Tranfered.")
+      })
+      .catch((error) => {
+        console.error('Error during API call:', error);
+        alert("error occured: "+ error)
+      });
   };
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(event.target.value);
@@ -146,7 +179,7 @@ const Records = () => {
 						<div className="mt-4 flex flex-col md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap justify-evenly">
 							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleView(record)}>View</button>
 							<button className="bg-inverseSupport03 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleEdit(record)}>Edit</button>
-							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleTransfer(record.patientId)}>Transfer</button>
+							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleTransfer(record)}>Transfer</button>
 							<button className="bg-inverseSupport01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleDelete(record.patientId)}>Delete</button>
 						</div>
 
@@ -162,6 +195,7 @@ const Records = () => {
       </button>
 			{patientSelected && <PatientDetails patient={patientSelected} isOpen={isPatientViewOpen} onClose={()=> setPatientDetails(false)}/>}
 			{patientSelected && <EditPatientModal patient={patientSelected} isOpen={isPatientEditOpen} onClose={()=> setPatientEdit(false)} onSubmit={(updatedPatient)=>handleEditSubmit(updatedPatient)}/>}
+			{patientSelected && <TransferPatientModal patient={patientSelected} isOpen={isPatientTransferOpen} onClose={()=> setPatientTransfer(false)} onSubmit={(updatedPatient)=>handleTransferSubmit(updatedPatient)} />}
     </div>
     </div>
   );
