@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Patient } from '../../../Types/Patient';
+import { Patient } from '../../../../Types/Patient';
 
 interface Props {
   options: Patient[];

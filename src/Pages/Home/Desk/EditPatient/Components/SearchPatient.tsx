@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Patient } from '../../../Types/Patient';
+import { Patient } from '../../../../Types/Patient';
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
+import { authState } from '../../../../../auth/auth';
 
 interface Props {
 	patients: Patient[];
@@ -65,7 +65,7 @@ const SearchBar: React.FC<Props> = ({ patients, setPatients,onSelect,searchTerm,
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
 				onClick={()=>setOpen(true)}
-        className="w-full bg-gray-200 text-gray-800 rounded-full pt-2 px-4 pl-10 h-10 focus:outline-none focus:bg-white"
+        className="w-full bg-gray-200 text-gray-800 rounded-full pt-2 px-4 pl-10 h-10 focus:outline-none focus:bg-gray"
       />
       <svg
         className="absolute right-1 top-1 h-5 w-5 text-gray-500 scale-150"

@@ -1,5 +1,5 @@
 import React from 'react'
-import Title from '../Components/Title'
+import Title from '../../Components/Title'
 import PatientForm from './Components/PatientForm'
 
 const AddPatient = () => {

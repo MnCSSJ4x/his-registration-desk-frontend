@@ -1,8 +1,8 @@
 import React,{useState} from 'react'
-import Title from '../Components/Title'
+import Title from '../../Components/Title'
 import EditForm from './Components/EditForm'
 import SearchBar from './Components/SearchPatient'
-import { Patient } from '../../Types/Patient'
+import { Patient } from '../../../Types/Patient'
 import { useNavigate } from 'react-router-dom'
 
 const EditPatient = () => {

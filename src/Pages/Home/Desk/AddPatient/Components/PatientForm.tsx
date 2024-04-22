@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
+import { authState } from '../../../../../auth/auth';
 
 interface FormData {
   firstName: string;

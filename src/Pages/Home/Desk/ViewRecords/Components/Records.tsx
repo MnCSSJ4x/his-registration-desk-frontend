@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PatientDetails from './PatientDetails';
 import EditPatientModal from './EditPatientModal';
-import { Patient,getAge } from '../../../Types/Patient';
+import { Patient,getAge } from '../../../../Types/Patient';
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
+import { authState } from '../../../../../auth/auth';
 
 const Records = () => {
 	const token=useRecoilValue(authState);

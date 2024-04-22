@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authState } from "../../../auth/auth";
 import { useRecoilState } from "recoil";
-const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  setRole: (role:string)=>void
+}
+const LoginForm: React.FC<LoginFormProps> = ({setRole}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -36,6 +39,7 @@ const LoginForm: React.FC = () => {
       // Handle successful login
       console.log(data.token)
       setAuth(data.token);
+      setRole("DESK");
       // document.cookie = `authToken=${data.token}; Secure; HttpOnly; SameSite=Strict`;
       setError('');
       navigate('/home'); // Navigate to landing page on success

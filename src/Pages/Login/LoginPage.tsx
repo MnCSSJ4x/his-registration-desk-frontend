@@ -1,12 +1,15 @@
 import React from 'react'
 import Navbar from './Components/Navbar'
 import LoginForm from './Components/LoginForm'
-
-const LoginPage = () => {
+interface LoginPageProps {
+  role: string;
+  setRole: (role:string)=>void
+}
+const LoginPage : React.FC<LoginPageProps> = ({ role,setRole}) => {
   return (
     <div className='flex flex-col'>
         <Navbar></Navbar>
-        <LoginForm></LoginForm>
+        <LoginForm setRole={setRole}></LoginForm>
     </div>
   )
 }

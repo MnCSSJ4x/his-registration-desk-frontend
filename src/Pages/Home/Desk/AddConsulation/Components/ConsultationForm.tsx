@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PatientSearchBar from './PatientSearchBar';
 import DoctorSearchBar from './DoctorSearchBar';
-import { Patient } from '../../../Types/Patient';
+import { Patient } from '../../../../Types/Patient';
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
+import { authState } from '../../../../../auth/auth';
 
 interface Doctor {
   dateOfBirth: string;

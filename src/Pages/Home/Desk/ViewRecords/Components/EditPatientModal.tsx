@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import {Patient, getAge} from "../../../Types/Patient"
+import {Patient, getAge} from "../../../../Types/Patient"
 import DatePicker from "react-datepicker";
 interface Props {
   patient: Patient;

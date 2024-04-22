@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
+import { authState } from '../../../../../auth/auth';
 
 interface Doctor {
   dateOfBirth: string;

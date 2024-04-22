@@ -4,8 +4,11 @@ import { useRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Navbar = () => {
-  const name = "Desk";
+interface NavbarProps{
+  role:string
+}
+const Navbar: React.FC<NavbarProps> = ({role}) => {
+  const name = role;
   const navigate=useNavigate();
   const [auth,setAuth]=useRecoilState(authState);
   const handleLogout= async()=>{

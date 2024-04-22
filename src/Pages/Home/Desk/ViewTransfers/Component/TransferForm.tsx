@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
-import { Patient } from '../../../Types/Patient';
+import { authState } from '../../../../../auth/auth';
+import { Patient } from '../../../../Types/Patient';
 
 interface FormData {
   patientId: string;

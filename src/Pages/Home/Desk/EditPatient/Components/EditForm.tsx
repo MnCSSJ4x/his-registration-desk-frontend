@@ -1,8 +1,8 @@
 import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Patient } from '../../../Types/Patient';
+import { Patient } from '../../../../Types/Patient';
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
+import { authState } from '../../../../../auth/auth';
 import DatePicker from 'react-datepicker';
 interface Props {
   patient: Patient;

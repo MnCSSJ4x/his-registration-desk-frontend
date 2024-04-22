@@ -1,5 +1,5 @@
 import React from 'react'
-import Title from '../Components/Title'
+import Title from '../../Components/Title'
 import TransferForm from './Component/TransferForm'
 
 const ViewTransfers = () => {

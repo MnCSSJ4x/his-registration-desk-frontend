@@ -1,5 +1,5 @@
 import React from 'react'
-import Title from '../Components/Title'
+import Title from '../../Components/Title'
 import Records from './Components/Records'
 
 const ViewRecords = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Patient } from '../../../Types/Patient';
+import { Patient } from '../../../../Types/Patient';
 import { useRecoilValue } from 'recoil';
-import { authState } from '../../../../auth/auth';
+import { authState } from '../../../../../auth/auth';
 
 interface PatientSearchBarProps {
   onSelectPatient: (patient: Patient) => void;
