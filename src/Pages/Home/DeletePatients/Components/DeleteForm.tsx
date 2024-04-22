@@ -42,7 +42,7 @@ const DeleteForm: React.FC = () => {
       const response = await fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token.token}`
+          'Authorization': `Bearer ${token}`
         }
       });
       if (!response.ok) {

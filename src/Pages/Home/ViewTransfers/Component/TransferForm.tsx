@@ -35,7 +35,7 @@ const TransferForm: React.FC = () => {
       const response = await fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token.token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (!response.ok) {
@@ -84,7 +84,7 @@ const TransferForm: React.FC = () => {
       fetch(`${process.env.REACT_APP_DB_URL}/patient/transfer/${formData.patient?.patientId}?newPatientType=${formData.to}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token.token}`
+        'Authorization': `Bearer ${token}`
       }
     })
       .then((response) => response.json())

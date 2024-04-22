@@ -36,7 +36,7 @@ const DoctorSearchBar: React.FC<DoctorSearchBarProps> = ({ onSelectDoctor }) => 
     fetch(`${process.env.REACT_APP_DB_URL}/employee/getAllDoctors`, {
 			method: 'GET',
 			headers: {
-				'Authorization': `Bearer ${token.token}`
+				'Authorization': `Bearer ${token}`
 			}
 		})
 		.then(response => {

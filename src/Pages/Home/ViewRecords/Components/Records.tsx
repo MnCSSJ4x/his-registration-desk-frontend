@@ -19,7 +19,7 @@ const Records = () => {
       fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token.token}`
+          'Authorization': `Bearer ${token}`
         }
       })
       .then(response => {
@@ -57,7 +57,7 @@ const Records = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token.token}`
+					'Authorization': `Bearer ${token}`
         },
 				body: JSON.stringify(updatedPatient)
 

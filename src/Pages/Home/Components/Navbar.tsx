@@ -2,14 +2,18 @@ import React from 'react'
 import { authState } from '../../../auth/auth';
 import { useRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Navbar = () => {
   const name = "Desk";
   const navigate=useNavigate();
   const [auth,setAuth]=useRecoilState(authState);
-  const handleLogout= ()=>{
-    setAuth({token: null});
-    navigate("/login");
+  const handleLogout= async()=>{
+    axios.post(`${process.env.REACT_APP_AUTHENTICATION_URL}/api/v1/auth/logout`,{
+      headers: {
+        Authorization: `Bearer ${auth}`,}})
+    setAuth(null);
+    navigate("/");
   }
   return (
     <nav className="bg-ui02 p-4 flex flex-wrap justify-between items-center">

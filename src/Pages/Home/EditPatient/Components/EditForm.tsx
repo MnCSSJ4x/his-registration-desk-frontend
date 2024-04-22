@@ -8,8 +8,9 @@ interface Props {
   patient: Patient;
   updateRecord: (patient: Patient)=>void;
   setClose: (val: Boolean)=>void
+  setSearchTerm: (val: string)=> void
 }
-const EditForm: React.FC<Props> = ({patient,updateRecord,setClose}) => {
+const EditForm: React.FC<Props> = ({patient,updateRecord,setClose,setSearchTerm}) => {
   const token=useRecoilValue(authState)
   const [editedPatient, setEditedPatient] = useState<Patient>(patient);
   const handleInputChange = (name: string, value: any) => {
@@ -36,7 +37,7 @@ const EditForm: React.FC<Props> = ({patient,updateRecord,setClose}) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token.token}`
+					'Authorization': `Bearer ${token}`
         },
 				body: JSON.stringify(editedPatient)
 
@@ -50,6 +51,8 @@ const EditForm: React.FC<Props> = ({patient,updateRecord,setClose}) => {
       })
       .then((data) => {
         updateRecord(data);
+        setSearchTerm("");
+        alert("Patient Edited!")
       })
       .catch((error) => {
         console.log(error.message);

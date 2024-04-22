@@ -34,8 +34,9 @@ const LoginForm: React.FC = () => {
     })
     .then((data) => {
       // Handle successful login
-      console.log(data)
-      setAuth(data);
+      console.log(data.token)
+      setAuth(data.token);
+      // document.cookie = `authToken=${data.token}; Secure; HttpOnly; SameSite=Strict`;
       setError('');
       navigate('/home'); // Navigate to landing page on success
     })

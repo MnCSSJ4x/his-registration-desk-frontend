@@ -29,7 +29,7 @@ const PatientSearchBar: React.FC<PatientSearchBarProps> = ({ onSelectPatient }) 
     fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
 			method: 'GET',
 			headers: {
-				'Authorization': `Bearer ${token.token}`
+				'Authorization': `Bearer ${token}`
 			}
 		})
 		.then(response => {

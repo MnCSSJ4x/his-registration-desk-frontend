@@ -33,7 +33,7 @@ const EditPatient = () => {
         <SearchBar patients={patients} setPatients={setPatients} onSelect={(patient)=>setPatient(patient)} searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
         <button className="flex flex-row justify-self-start my-10 mx-4 bg-interactive01 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none" onClick={()=>navigate("/home")}>Back</button>
       </div>
-      {patientSelected && searchTerm && <EditForm patient={patientSelected} updateRecord={updateRecord} setClose={setClose} />}
+      {patientSelected && searchTerm && <EditForm patient={patientSelected} updateRecord={updateRecord} setClose={setClose} setSearchTerm={setSearchTerm}/>}
       </div>
   )
 }

@@ -25,7 +25,7 @@ const SearchBar: React.FC<Props> = ({ patients, setPatients,onSelect,searchTerm,
     fetch(`${process.env.REACT_APP_DB_URL}/patient`, {
 			method: 'GET',
 			headers: {
-				'Authorization': `Bearer ${token.token}`
+				'Authorization': `Bearer ${token}`
 			}
 		})
 		.then(response => {
