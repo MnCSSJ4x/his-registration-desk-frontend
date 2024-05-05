@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const CardSet = () => {
   const cards = [
     { title: 'Add New Patient', clipart: '👩‍⚕️', description: 'Click to add a new patient record.', route: '/home/addRecords' },
-    { title: 'Add Consultation', clipart: '👨‍⚕️', description: 'Click to add a consultation for an existing patient.', route: '/home/addConsultation' },
+    { title: 'Add/Reassign Consultation', clipart: '👨‍⚕️', description: 'Click to add/reassign a consultation for an existing patient.', route: '/home/addConsultation' },
     { title: 'Edit Patient Details', clipart: '📝', description: 'Click to edit details of an existing patient.', route: '/home/editRecords' },
     { title: 'View Records', clipart: '🔍', description: 'Click to view patient records and history.', route: '/home/viewRecords' },
     { title: 'Transfers', clipart: '🚑', description: 'Click to initiate patient transfers between departments.', route: '/home/viewTransfers' },

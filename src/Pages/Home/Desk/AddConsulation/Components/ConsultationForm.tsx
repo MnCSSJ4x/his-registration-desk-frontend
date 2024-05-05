@@ -50,9 +50,10 @@ const ConsultationForm: React.FC = () => {
       },
       body: JSON.stringify({patientId: formData.patientId, doctorId: formData.doctorID})
     })
-    .then(response => {
+    .then((response) => {
+      console.log(response)
       if (!response.ok) {
-        throw new Error('Failed to post data');
+        alert(response.status)
       }
       console.log('Data posted successfully:', response.status);
       alert("Consultation added!")
@@ -90,7 +91,7 @@ const ConsultationForm: React.FC = () => {
         </div>
         <div>
           <label htmlFor="doctorName">Doctor Name*</label>
-          <DoctorSearchBar onSelectDoctor={handleDoctorSelect} />
+          <DoctorSearchBar onSelectDoctor={handleDoctorSelect} departmentID={null}/>
           {errors.doctorName && <p className="text-danger02">{errors.doctorName}</p>}
         </div>
       </div>

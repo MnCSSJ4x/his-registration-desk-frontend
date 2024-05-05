@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { authState } from '../../../../../auth/auth';
-
-interface Doctor {
-  dateOfBirth: string;
-  employeeId: string;
-  employeeStatus: "CHECKED_IN"|"CHECKED_OUT";
-  employeeType: string;
-  lastCheckIn: string;
-  name: string;
-}
+import { Doctor } from '../../../../Types/Doctor';
 
 
 interface DoctorSearchBarProps {
   onSelectDoctor: (doctor: Doctor) => void;
+  departmentID: string|null;
 }
 
-const DoctorSearchBar: React.FC<DoctorSearchBarProps> = ({ onSelectDoctor }) => {
+const DoctorSearchBar: React.FC<DoctorSearchBarProps> = ({ onSelectDoctor,departmentID }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isOpen,setOpen]=useState<Boolean>(false);
@@ -33,26 +26,51 @@ const DoctorSearchBar: React.FC<DoctorSearchBarProps> = ({ onSelectDoctor }) => 
     fetchDoctors();
   }, []);
   const fetchDoctors = async () => {
-    fetch(`${process.env.REACT_APP_DB_URL}/employee/getAllDoctors`, {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${token}`
-			}
-		})
-		.then(response => {
-			if (response.ok) {
-				return response.json();
-			} else {
-				throw new Error('Failed to fetch patient records');
-			}
-		})
-		.then(data => {
-      console.log(data)
-			setDoctors(data);
-		})
-		.catch(error => {
-			console.log(error.message);
-		});
+    if(departmentID===null){
+
+      fetch(`${process.env.REACT_APP_DB_URL}/employee/getAllDoctors`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch patient records');
+        }
+      })
+      .then(data => {
+        console.log(data)
+        setDoctors(data);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+    }
+    else{
+      fetch(`${process.env.REACT_APP_DB_URL}/employeeDepartment/getAllDoctorsByDepartmentID/${departmentID}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch patient records');
+        }
+      })
+      .then(data => {
+        console.log(data)
+        setDoctors(data);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+    }
   };
 
   const handleSelectDoctor = (doctor: Doctor) => {
