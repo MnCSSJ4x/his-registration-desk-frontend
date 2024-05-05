@@ -22,7 +22,7 @@ const App = () => {
 				<Route path="/" element={<LandingPage />} />
 				<Route path="/login" element={<LoginPage role={role} setRole={setRole}/>} />
 				<Route path="/home" element={<HomePage role={role} setRole={setRole}/>}>
-					{role==="DESK" && <>
+					{role.includes("DESK") && <>
 					<Route path="addRecords" element={<AddPatient />} />
 					<Route path="addConsultation" element={<AddConsultation />} />
 					<Route path="deleteRecords" element={<DeletePatient />} />
@@ -31,7 +31,7 @@ const App = () => {
 					<Route path="viewRecords" element={<ViewRecords />} />
 					</>}
 					{
-						role==="PHARMACIST" &&
+						role.includes("PHARMACIST") &&
 						<>
 						<Route></Route>
 						</>

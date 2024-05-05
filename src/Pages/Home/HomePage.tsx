@@ -27,8 +27,8 @@ const HomePage: React.FC<LoginPageProps> = ({ role,setRole}) => {
   return (
     <div className='flex flex-col'>
         <Navbar role={role}/>
-        {isHome && role==="DESK"?<CardSet/>:""}
-        {isHome && role==="PHARMACIST"?<PatientSearch/>:""}
+        {isHome && role.includes("DESK")?<CardSet/>:""}
+        {isHome && role.includes("PHARMACIST")?<PatientSearch/>:""}
 
         <Outlet/>
     </div>

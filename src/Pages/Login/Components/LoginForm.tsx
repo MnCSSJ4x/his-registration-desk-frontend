@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authState } from "../../../auth/auth";
 import { useRecoilState } from "recoil";
+import axios from "axios";
 interface LoginFormProps {
   setRole: (role:string)=>void
 }
@@ -35,11 +36,15 @@ const LoginForm: React.FC<LoginFormProps> = ({setRole}) => {
         throw new Error('Invalid username or password. Please try again.');
       }
     })
-    .then((data) => {
+    .then(async (data) => {
       // Handle successful login
       console.log(data.token)
       setAuth(data.token);
-      setRole("DESK");
+      const role=await axios.get(`${process.env.REACT_APP_DB_URL}/employee/${username}`,{
+        headers: {
+          Authorization: `Bearer ${data.token}`,}});
+      console.log(role)
+      setRole(role.data.name+" : "+role.data.employeeType);
       // document.cookie = `authToken=${data.token}; Secure; HttpOnly; SameSite=Strict`;
       setError('');
       navigate('/home'); // Navigate to landing page on success
