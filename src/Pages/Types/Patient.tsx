@@ -2,10 +2,10 @@ export interface Patient {
   patientId: string;
   name: string;
   aabhaId: string;
-  aadharId: string;
   emailId: string;
   dateOfBirth: string; // Consider using a Date type if you need to perform date operations
   emergencyContactNumber: string;
+  bloodGroup: "A_POSITIVE"| "A_NEGATIVE"| "B_POSITIVE"| "B_NEGATIVE"| "AB_POSITIVE"| "AB_NEGATIVE"| "O_POSITIVE"| "O_NEGATIVE";
   gender: "MALE" | "FEMALE" | "OTHER"; // Assuming gender can only be one of these values
   patientType: "INPATIENT" | "OUTPATIENT"; // Assuming patient type can only be one of these values
   dischargeStatus: null | string; // Assuming discharge status can either be null or a string

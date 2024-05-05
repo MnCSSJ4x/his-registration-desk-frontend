@@ -6,10 +6,10 @@ interface FormData {
   firstName: string;
   lastName: string;
   aabhaId: string;
-  aadharId: string;
   dob: Date;
   email: string;
   emergencyContactName: string;
+  bloodGroup: string;
   emergencyContactNumber: string;
   patientType: string;
   address: string;
@@ -40,10 +40,10 @@ const PrintablePatientForm: React.FC<PatientPrintProps> = ({patient,isOpen,onClo
 		{ label: "First Name", value: patient.firstName },
 		{ label: "Last Name", value: patient.lastName },
 		{ label: "AABHA ID", value: patient.aabhaId },
-		{ label: "AADHAR ID", value: patient.aadharId },
 		{ label: "Date of Birth", value: patient.dob },
 		{ label: "Email", value: patient.email },
 		{ label: "Emergency Contact Name", value: patient.emergencyContactName },
+		{ label: "Blood Group", value: patient.bloodGroup },
 		{ label: "Emergency Contact Number", value: patient.emergencyContactNumber },
 		{ label: "Patient Type", value: patient.patientType },
 		{ label: "Address", value: patient.address },

@@ -82,7 +82,24 @@ const EditPatientModal: React.FC<Props> = ({ patient, isOpen, onClose, onSubmit 
                           <option value="INPATIENT">Inpatient</option>
                           <option value="OUTPATIENT">Outpatient</option>
                         </select>
-                      ) : (
+                      ) :key==="bloodGroup"?
+                      <select
+                          id={key}
+                          name={key}
+                          value={value as string}
+                          onChange={(e) => handleInputChange(e.target.name, e.target.value)}
+                          className="border border-overlay01 rounded-lg focus:outline-overlay01 px-2 py-1" // Add any additional className for styling
+                        >
+                          <option value="A_POSITIVE">A Positive</option>
+                          <option value="A_NEGATIVE">A Negative</option>
+                          <option value="B_POSITIVE">B Positive</option>
+                          <option value="B_NEGATIVE">B Negative</option>
+                          <option value="AB_POSITIVE">AB Positive</option>
+                          <option value="AB_NEGATIVE">AB Negative</option>
+                          <option value="O_POSITIVE">O Positive</option>
+                          <option value="O_NEGATIVE">O Negative</option>
+                        </select>
+                      : (
                         <input
                           type="text"
                           id={key}

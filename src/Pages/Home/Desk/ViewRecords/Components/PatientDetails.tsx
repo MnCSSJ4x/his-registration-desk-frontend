@@ -21,9 +21,6 @@ const PatientDetails: React.FC<Props> = ({ patient, isOpen, onClose }) => {
                   <span className="text-text01">Aabha ID:</span> <span className="font-medium">{patient.aabhaId}</span>
                 </div>
                 <div className="px-2">
-                  <span className="text-text01">Aadhar ID:</span> <span className="font-medium">{patient.aadharId}</span>
-                </div>
-                <div className="px-2">
                   <span className="text-text01">Email:</span> <span className="font-medium">{patient.emailId}</span>
                 </div>
                 <div className="px-2">
@@ -34,6 +31,9 @@ const PatientDetails: React.FC<Props> = ({ patient, isOpen, onClose }) => {
                 </div>
                 <div className="px-2">
                   <span className="text-text01">Gender:</span> <span className="font-medium">{patient.gender}</span>
+                </div>
+                <div className="px-2">
+                  <span className="text-text01">Blood Group</span> <span className="font-medium">{patient.bloodGroup}</span>
                 </div>
                 <div className="px-2">
                   <span className="text-text01">Patient Type:</span> <span className="font-medium">{patient.patientType}</span>

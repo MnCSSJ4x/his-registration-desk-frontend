@@ -70,6 +70,7 @@ const Records = () => {
 
       })
       .then(response => {
+        console.log(response)
         if (response.ok) {
           return response.json();
         } else {
@@ -90,10 +91,6 @@ const Records = () => {
 			alert("Session timed out");
 		}
 	}
-  const handleDelete = (id: string) => {
-    // Implement delete functionality
-    console.log(`Deleting patient with ID: ${id}`);
-  };
 
   const handleTransfer = (id: Patient) => {
     // Implement transfer functionality
@@ -168,10 +165,10 @@ const Records = () => {
             <h2 className="text-lg px-4 font-semibold mb-2">{record.name}</h2>
             <ul className="text-sm px-4 text-gray-500">
 							<li><strong>Aabha ID:</strong> {record.aabhaId}</li>
-							<li><strong>Aadhar ID:</strong> {record.aadharId}</li>
 							<li><strong>Email:</strong> {record.emailId}</li>
 							<li><strong>Age:</strong> {getAge(record.dateOfBirth)}</li>
 							<li><strong>Emergency Contact Number:</strong> {record.emergencyContactNumber}</li>
+							<li><strong>Blood Group</strong> {record.bloodGroup}</li>
 							<li><strong>Gender:</strong> {record.gender}</li>
 							<li><strong>Patient Type:</strong> {record.patientType}</li>
 							<li><strong>Discharge Status:</strong> {record.dischargeStatus}</li>
@@ -180,7 +177,7 @@ const Records = () => {
 							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleView(record)}>View</button>
 							<button className="bg-inverseSupport03 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleEdit(record)}>Edit</button>
 							<button className="bg-interactive01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleTransfer(record)}>Transfer</button>
-							<button className="bg-inverseSupport01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleDelete(record.patientId)}>Delete</button>
+							{/* <button className="bg-inverseSupport01 text-white py-2 rounded-md m-2 md:w-24 lg:w-20" onClick={() => handleDelete(record.patientId)}>Delete</button> */}
 						</div>
 
           </div>

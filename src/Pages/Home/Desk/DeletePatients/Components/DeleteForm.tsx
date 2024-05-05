@@ -107,29 +107,28 @@ const DeleteForm: React.FC = () => {
     setErrors(newErrors);
 
     if (Object.values(newErrors).every((error) => !error)) {
-      if (formData.isDeleteConfirmed !== null) {
+      if (formData.isDeleteConfirmed !== null && formData.isDeleteConfirmed===true) {
         // Proceed with deletion
         fetch(`${process.env.REACT_APP_DB_URL}/patient/${formData.patientId}`, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({}),
         })
           .then((response) => {
+            console.log(response)
             if (response.ok) {
-              return response.json();
+              alert('Patient deleted successfully.');
+              navigate("/home");
             }
-            throw new Error('Failed to delete patient');
-          })
-          .then((data) => {
-            alert('Patient deleted successfully.');
-            navigate("/home");
           })
           .catch((error) => {
             console.error('Error deleting patient:', error);
             alert('Failed to delete patient. Please try again.');
           });
+      }
+      else{
+          alert('If you want to delete the patient, please select Yes')
       }
     }
   };
@@ -199,7 +198,7 @@ const DeleteForm: React.FC = () => {
         {errors.isDeleteConfirmed && <p className="text-danger02">{errors.isDeleteConfirmed}</p>}
       </div>
       <div className="mt-4 px-8 flex justify-center gap-8">
-        <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary">
+        <button type="submit" className="bg-interactive01 text-text04 px-16 py-2 rounded-lg hover:bg-hoverPrimary" onClick={(e)=>handleSubmit(e)}>
           Submit
         </button>
         <button

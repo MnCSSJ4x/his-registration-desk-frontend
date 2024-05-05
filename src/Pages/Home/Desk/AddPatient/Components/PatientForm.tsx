@@ -10,9 +10,9 @@ interface FormData {
   firstName: string;
   lastName: string;
   aabhaId: string;
-  aadharId: string;
   dob: Date; // Change the type to Date
   email: string;
+  bloodGroup: string;
   gender: string;
   emergencyContactName: string;
   emergencyContactNumber: string;
@@ -28,9 +28,9 @@ interface FormErrors {
 interface ApiFormData {
   name: string;
   aabhaId: string;
-  aadharId: string;
   emailId: string;
   dateOfBirth: string;
+  bloodGroup: string;
   emergencyContactNumber: string;
   gender?: string;
   patientType: string;
@@ -44,10 +44,10 @@ const PatientForm: React.FC = () => {
     firstName: "",
     lastName: "",
     aabhaId: "",
-    aadharId: "",
     dob: new Date("1/1/2000"), // Set initial date value
     email: "",
     gender: "",
+    bloodGroup: "",
     emergencyContactName: "",
     emergencyContactNumber: "",
     patientType: "",
@@ -99,14 +99,14 @@ const PatientForm: React.FC = () => {
         const apiFormData: ApiFormData = {
           name: `${formData.firstName} ${formData.lastName}`,
           aabhaId: formData.aabhaId,
-          aadharId: formData.aadharId,
           emailId: formData.email,
+          bloodGroup: formData.bloodGroup,
           dateOfBirth: formData.dob.toISOString(), // Convert Date to string
           emergencyContactNumber: formData.emergencyContactNumber,
           gender: formData.gender,
           patientType: formData.patientType,
         };
-
+        console.log(apiFormData);
         await fetch(`${process.env.REACT_APP_DB_URL}/patient/signup`, {
           method: 'POST',
           headers: {
@@ -183,15 +183,24 @@ const PatientForm: React.FC = () => {
           />
         </div>
         <div>
-          <label htmlFor="aadharId">AADHAR ID</label>
-          <input
-            type="text"
-            id="aadharId"
-            name="aadharId"
-            value={formData.aadharId}
+          <label htmlFor="bloodGroup">Blood Group*</label>
+          <select
+            id="bloodGroup"
+            name="bloodGroup"
+            value={formData.bloodGroup}
             onChange={handleChange}
             className="w-full p-2 border focus:border-interactive04"
-          />
+          >
+            <option value="">Select...</option>
+            <option value="A_POSITIVE">A Positive</option>
+            <option value="A_NEGATIVE">A Negative</option>
+            <option value="B_POSITIVE">B Positive</option>
+            <option value="B_NEGATIVE">B Negative</option>
+            <option value="AB_POSITIVE">AB Positive</option>
+            <option value="AB_NEGATIVE">AB Negative</option>
+            <option value="O_POSITIVE">O Positive</option>
+            <option value="O_NEGATIVE">O Negative</option>
+          </select>
         </div>
         <div>
           <label htmlFor="dob">Date of Birth*</label>
